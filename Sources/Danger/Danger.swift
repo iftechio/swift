@@ -10,13 +10,12 @@ import Logger
 // MARK: - DangerRunner
 
 final class DangerRunner {
-    static let shared = DangerRunner()
-
     let logger: Logger
     let dsl: DangerDSL
     var results = DangerResults()
+    static var shared: DangerRunner!
 
-    private init() {
+    init(dslJSONArg: String, outputJSONPath: String) {
         let isVerbose = CommandLine.arguments.contains("--verbose")
             || (ProcessInfo.processInfo.environment["DEBUG"] != nil)
         let isSilent = CommandLine.arguments.contains("--silent")
@@ -31,16 +30,8 @@ final class DangerRunner {
             exit(1)
         }
 
-        let dslJSONArg: String? = CommandLine.arguments[cliLength - 2]
-        let outputJSONPath = CommandLine.arguments[cliLength - 1]
-
-        guard let dslJSONPath = dslJSONArg else {
-            logger.logError("could not find DSL JSON arg")
-            exit(1)
-        }
-
-        guard let dslJSONContents = FileManager.default.contents(atPath: dslJSONPath) else {
-            logger.logError("could not find DSL JSON at path: \(dslJSONPath)")
+        guard let dslJSONContents = FileManager.default.contents(atPath: dslJSONArg) else {
+            logger.logError("could not find DSL JSON at path: \(dslJSONArg)")
             exit(1)
         }
         do {
@@ -61,8 +52,9 @@ final class DangerRunner {
 // MARK: - Public Functions
 
 // swiftlint:disable:next identifier_name
-public func Danger() -> DangerDSL {
-    DangerRunner.shared.dsl
+public func Danger(dslJSONArg: String, outputJSONPath: String) -> DangerDSL {
+    DangerRunner.shared = DangerRunner(dslJSONArg: dslJSONArg, outputJSONPath: outputJSONPath)
+    return DangerRunner.shared!.dsl
 }
 
 // MARK: - Private Functions

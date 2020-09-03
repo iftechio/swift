@@ -20,7 +20,7 @@ public enum SwiftLint {
         case files([File])
     }
 
-    static let danger = Danger()
+    static let danger = Danger(dslJSONArg: "", outputJSONPath: "")
     static let shellExecutor = ShellExecutor()
 
     /// This method is deprecated in favor of
