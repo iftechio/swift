@@ -30,15 +30,14 @@ final class DangerRunner {
             exit(1)
         }
 
-        guard let dslJSONContents = FileManager.default.contents(atPath: dslJSONArg) else {
-            logger.logError("could not find DSL JSON at path: \(dslJSONArg)")
-            exit(1)
-        }
         do {
+            guard let data = dslJSONArg.data(using: .utf8) else {
+                exit(1)
+            }
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .formatted(DateFormatter.defaultDateFormatter)
             logger.debug("Decoding the DSL into Swift types")
-            dsl = try decoder.decode(DSL.self, from: dslJSONContents).danger
+            dsl = try decoder.decode(DSL.self, from: data).danger
         } catch {
             logger.logError("Failed to parse JSON:", error)
             exit(1)
