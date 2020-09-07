@@ -22,14 +22,6 @@ final class DangerRunner {
         logger = Logger(isVerbose: isVerbose, isSilent: isSilent)
         logger.debug("Ran with: \(CommandLine.arguments.joined(separator: " "))")
 
-        let cliLength = CommandLine.arguments.count
-
-        guard cliLength - 2 > 0 else {
-            logger.logError("To execute Danger run danger-swift ci, " +
-                "danger-swift pr or danger-swift local on your terminal")
-            exit(1)
-        }
-
         do {
             guard let data = dslJSONArg.data(using: .utf8) else {
                 exit(1)
